@@ -105,7 +105,7 @@ Output who is currently logged in according to FILE.\n\
 If FILE is not specified, use %s.  %s as FILE is common.\n\
 \n\
 "),
-              UTMP_FILE, WTMP_FILE);
+              WTMP_FILE, UTMP_FILE);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       emit_ancillary_info (PROGRAM_NAME);
@@ -131,7 +131,7 @@ main (int argc, char **argv)
   switch (argc - optind)
     {
     case 0:			/* users */
-      users (UTMP_FILE, READ_UTMP_CHECK_PIDS);
+      users (WTMP_FILE, 0);
       break;
 
     case 1:			/* users <utmp file> */
