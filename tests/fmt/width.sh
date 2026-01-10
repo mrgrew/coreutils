@@ -1,5 +1,5 @@
 #!/bin/sh
-# Ensure exit with failure if only some operations succeed
+# Exercise the fmt -w option.
 
 # Copyright (C) 2026 Free Software Foundation, Inc.
 
@@ -17,15 +17,24 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 . "${srcdir=.}/tests/init.sh"; path_prepend_ ./src
-print_ver_ chmod
+print_ver_ fmt
 
-touch file || framework_failure_
-returns_ 1 chmod 0 missing_file file || fail=1
+# Ensure width is max display width.
+# Before v9.10, width incorrectly included the \n character
+printf 'aa bb cc dd ee' | fmt -w 8 > out || fail=1
+cat <<\_EOF_ > exp || framework_failure_
+aa bb cc
+dd ee
+_EOF_
+compare exp out || fail=1
 
-touch unreadable || framework_failure_
-chmod 0 unreadable || framework_failure_
-if ! test -r unreadable; then
-  test -r file && fail=1
-fi
+printf 'aa bb cc dd ee' | fmt -w 7 > out || fail=1
+cat <<\_EOF_ > exp || framework_failure_
+aa
+bb cc
+dd ee
+_EOF_
+compare exp out || fail=1
+
 
 Exit $fail

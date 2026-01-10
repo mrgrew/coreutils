@@ -24,8 +24,9 @@ if ! test -w /dev/full || ! test -c /dev/full; then
   skip_ '/dev/full is required'
 fi
 
-# Writers that may output data indefinitely
-# First word in command line is checked against built programs
+# Writers that may output data indefinitely.
+# First word in command line is checked against built programs.
+# Escapes must be double escaped.
 printf '%s' "\
 cat /dev/zero
 comm -z /dev/zero /dev/zero
@@ -34,6 +35,7 @@ cut -z -f1- /dev/zero
 date +%${OFF64_T_MAX}c
 date --version; yes 0 | date -f-
 dd if=/dev/zero
+du --version; yes /dev/null | tr '\\\\n' '\\\\0' | du -l --files0-from=-
 expand /dev/zero
 factor --version; yes 1 | factor
 fmt /dev/zero
@@ -41,7 +43,7 @@ fmt --version; yes | fmt
 fold /dev/zero
 fold -b /dev/zero
 fold -c /dev/zero
-fold --version; yes | tr -d '\\n' | fold
+fold --version; yes | fold
 head -z -n-1 /dev/zero
 join -a 1 -z /dev/zero /dev/null
 nl --version; yes | nl
@@ -56,6 +58,7 @@ tee < /dev/zero
 tr . . < /dev/zero
 unexpand /dev/zero
 uniq -z -D /dev/zero
+wc --version; yes /dev/null | tr '\\\\n' '\\\\0' | wc --files0-from=-
 yes
 " |
 sort -k 1b,1 > all_writers || framework_failure_
